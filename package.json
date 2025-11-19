@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Abhijeet14d/Chat-App.git"
+    "url": "git+https://github.com/aman010mishra/Mern-chat-App.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Abhijeet14d/Chat-App/issues"
+    "url": "https://github.com/aman010mishra/Mern-chat-App/issues"
   },
-  "homepage": "https://github.com/Abhijeet14d/Chat-App#readme"
+  "homepage": "https://github.com/aman010mishra/Mern-chat-App#readme"
 }
