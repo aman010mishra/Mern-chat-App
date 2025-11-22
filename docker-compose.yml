@@ -55,7 +55,7 @@ services:
 
   # Frontend Service
   frontend:
-    image: ${DOCKER_REGISTRY:-}chatapp-frontend:${IMAGE_TAG:-latest}
+    image: "${DOCKER_REGISTRY}/${DOCKER_USERNAME}/chatapp-frontend:${IMAGE_TAG}-latest"
     build:
       context: ./frontend
       dockerfile: Dockerfile
