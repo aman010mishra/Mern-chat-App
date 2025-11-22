@@ -1,42 +1,86 @@
+version: '3.8'
+
 services:
+  # MongoDB Database
+  mongo:
+    image: mongo:7.0
+    container_name: chatapp-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+    networks:
+      - chatapp-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # Backend Service
   backend:
-    image: nuclearcode070/chatapp-backend:latest
+    image: ${DOCKER_REGISTRY:-}chatapp-backend:${IMAGE_TAG:-latest}
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: backend
+      args:
+        NODE_ENV: production
+    container_name: chatapp-backend
+    restart: unless-stopped
     ports:
-      - '5001:5001'
-    env_file:
-      - ./backend/.env
+      - '8000:8000'
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 8000
+      MONGO_URI: ${MONGO_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     networks:
       - chatapp-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8000/api/auth/check', (r) => {process.exit(r.statusCode === 200 || r.statusCode === 401 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
+  # Frontend Service
   frontend:
-    image: nuclearcode070/chatapp-frontend:latest
+    image: ${DOCKER_REGISTRY:-}chatapp-frontend:${IMAGE_TAG:-latest}
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: chatapp-frontend
+    restart: unless-stopped
     ports:
-      - '5173:80'
+      - '80:80'
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - chatapp-network
-
-  mongo:
-    image: mongo
-    container_name: mongo
-    ports:
-      - '27018:27017'
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - chatapp-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   mongo-data:
+    driver: local
+  mongo-config:
+    driver: local
 
 networks:
-  chatapp-network:   
+  chatapp-network:
+    driver: bridge   
