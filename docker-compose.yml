@@ -23,7 +23,7 @@ services:
 
   # Backend Service
   backend:
-    image: "${DOCKER_REGISTRY}/${DOCKER_USERNAME}/chatapp-backend:${IMAGE_TAG}-latest"
+    image: chatapp-backend:local  # ← FIXED: Simple local tag
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -55,7 +55,7 @@ services:
 
   # Frontend Service
   frontend:
-    image: "${DOCKER_REGISTRY}/${DOCKER_USERNAME}/chatapp-frontend:${IMAGE_TAG}-latest"
+    image: chatapp-frontend:local  # ← FIXED: Simple local tag
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -83,4 +83,4 @@ volumes:
 
 networks:
   chatapp-network:
-    driver: bridge   
+    driver: bridge
