@@ -23,7 +23,7 @@ services:
 
   # Backend Service
   backend:
-    image: ${DOCKER_REGISTRY:-}chatapp-backend:${IMAGE_TAG:-latest}
+    image: "${DOCKER_REGISTRY}/${DOCKER_USERNAME}/chatapp-backend:${IMAGE_TAG}-latest"
     build:
       context: ./backend
       dockerfile: Dockerfile
