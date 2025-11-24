@@ -1,5 +1,5 @@
 
-# Chat Application
+# Chat.. Application
 This is a full-stack chat application built with **React**, **Node.js**, **Express**, **MongoDB**, and **Socket.IO**. The application allows users to register, log in, and engage in real-time messaging with other users. It also supports features like profile management, image uploads, and theme customization.
 
 APPLICATION LINK: "https://mern-hack-chat.onrender.com/"
